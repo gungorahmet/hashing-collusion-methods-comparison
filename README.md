@@ -1,2 +1,6 @@
-# hashing-collusion-methods-comparison
-Comparison of "Chaining, Double Hashing, Linear Probing, Quadratic_Probing"
+# Comparison of hashing collusion resolve methods<br><br>
+<br><br>
+- Chaining<br>
+- Double Hashing<br>
+- Linear Probing<br>
+- Quadratic_Probing<br>
