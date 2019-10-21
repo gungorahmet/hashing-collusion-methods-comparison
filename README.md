@@ -1,4 +1,4 @@
-# Comparison of hashing collusion resolve methods<br><br>
+# Comparison of hashing collusion resolve methods
 <br><br>
 - Chaining<br>
 - Double Hashing<br>
