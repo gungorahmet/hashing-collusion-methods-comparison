@@ -11,7 +11,7 @@ My code level implementation of Hash-Resolve logic<br><br>
 - Quadratic_Probing<br>
 <br>
 
-There is a dictionary_tr_en.txt file which contains "English-Turkish" meaing pairs like below<br>
+  There is a dictionary_tr_en.txt file which contains "English-Turkish" meaning pairs like below<br>
 We need to search an English word from the dictionary to find "Turkish" equivalent.<br>
 So to accelerate this search process, I will try some methods and compare their time and costs.<br>
 
