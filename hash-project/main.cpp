@@ -1,3 +1,17 @@
+/* ***********************************************************************
+ *    Author:       Ahmet Gungor
+ *    Description:  Comparison of hashing and resolving with
+ *
+ *                  - Chaining
+ *                  - Double Hashing
+ *                  - Linear Probing
+ *                  - Quadratic Probing
+ *                  
+ *    Start Date        : 22.10.2019
+ *    Last Updated Date : 24.10.2019
+ *
+ */
+ 
 #include <iostream>
 #include <string>
 #include <fstream>

@@ -8,7 +8,7 @@ My code level implementation of Hash-Resolve logic<br><br>
 - Chaining<br>
 - Double Hashing<br>
 - Linear Probing<br>
-- Quadratic_Probing<br>
+- Quadratic Probing<br>
 <br>
 
   There is a dictionary_tr_en.txt file which contains "English-Turkish" meaning pairs like below<br>
