@@ -2,8 +2,8 @@
  *    Author:       Ahmet Gungor
  *    Description:  Comparison of hashing and resolving with
  *
- *                  - Chaining
  *                  - Double Hashing
+ *                  - Chaining
  *                  - Linear Probing
  *                  - Quadratic Probing
  *                  
@@ -32,10 +32,16 @@ int bind_from_file();
 void draw_menu(int);
 int hash_word(char[36]);
 int hash_num(int);
-void resolver_func(int, string);
+void resolver_func(int);
 
 int word_count = 1, optimum_value = 0, collusion_count = 0;
 string dictionary_file_full;
+
+string resolvers[4] = {"Chaining", 
+                       "Quadratic Probing", 
+                       "Double Hashing", 
+                       "Linear Probing",
+                      };
 
 // According to the case, characters has max 36 and 68.
 // Not requested as pointer.
@@ -54,21 +60,18 @@ class Unit
             full = false;
         }
 };
-//void normalize_Turkish_characters(char []);
-//void Chaining();
-//void Chaining_Oku(char[36]);
-//void Quadratic_Probing();
-//void Quadratic_Oku(char[36]);
-//void Double_Hashing();
-//void Double_Oku(char[36]);
-//void Linear_Probing();
-//void Linear_Oku(char[36]);
 
-bool is_prime_num(int sayi)
+void normalize_Turkish_characters(char []);
+void chaining_reader(char[36], int choice);
+void quadratic_reader(char[36], int choice);
+void double_reader(char[36], int choice);
+void linear_reader(char[36], int choice);
+
+bool is_prime_num(int num)
 {
-    for(int i = 2; i < sayi; i++)
+    for(int i = 2; i < num; i++)
     {
-        if (sayi % i == 0)
+        if (num % i == 0)
             return false;
     }
     return true;
@@ -137,7 +140,7 @@ int hash_num(int number)
     return (number * 2 + 1) % optimum_value;
 }
 
-void resolver_func(int choice, string resolver_type)
+void resolver_func(int choice)
 {
     
     int alloc_memory = optimum_value;
@@ -149,13 +152,13 @@ void resolver_func(int choice, string resolver_type)
     Unit table[alloc_memory];
     int second_base = optimum_value; // For Chaining
     
-    string local_English_tmp,local_Turkish_temp;
+    string local_English_tmp,local_Turkish_tmp;
     int first_base = 0;
     
     for(int i = 0; i < word_count; i++)
     {
         local_English_tmp = "";
-        local_Turkish_temp = "";
+        local_Turkish_tmp = "";
         for(int j = 0; j < 36; j++)
         {
             local_English_tmp += dictionary_file_full[first_base];
@@ -169,7 +172,7 @@ void resolver_func(int choice, string resolver_type)
         
         while(dictionary_file_full[first_base] != '\n')
         {
-            local_Turkish_temp+=dictionary_file_full[first_base];
+            local_Turkish_tmp += dictionary_file_full[first_base];
             first_base++;
             if(dictionary_file_full[first_base] == '\0')
                 break;
@@ -177,46 +180,85 @@ void resolver_func(int choice, string resolver_type)
         first_base++;
         
         strcpy(tmpEnglish,local_English_tmp.c_str());
-        strcpy(tmpTurkish,local_Turkish_temp.c_str());
+        strcpy(tmpTurkish,local_Turkish_tmp.c_str());
         
         if(table[hash_word(tmpEnglish)].full == true)
             collusion_count++;
         
-        if(table[(hash_word(tmpEnglish))].full == false)
+        if (choice == 0)
         {
-            strcpy(table[(hash_word(tmpEnglish))].English,tmpEnglish);
-            strcpy(table[(hash_word(tmpEnglish))].Turkish,tmpTurkish);
-            table[(hash_word(tmpEnglish))].full = true;
-        }
-        else
-        {
-            if (choice == 0)
+            if(table[(hash_word(tmpEnglish))].full == false)
             {
-                strcpy(table[second_base].English,tmpEnglish);
-                strcpy(table[second_base].Turkish,tmpTurkish);
-                table[second_base].full = true;
-                table[(hash_word(tmpEnglish))].next = second_base;
-                second_base++;
+                strcpy(table[(hash_word(tmpEnglish))].English,tmpEnglish);
+                strcpy(table[(hash_word(tmpEnglish))].Turkish,tmpTurkish);
+                table[(hash_word(tmpEnglish))].full = true;
             }
-            //TODO if (choice == 1) if (choice == 2) if (choice == 3)
+            else
+            {
+                    strcpy(table[second_base].English,tmpEnglish);
+                    strcpy(table[second_base].Turkish,tmpTurkish);
+                    table[second_base].full = true;
+                    table[(hash_word(tmpEnglish))].next = second_base;
+                    second_base++;
+                //TODO if (choice == 1) if (choice == 2) if (choice == 3)
+            }
+        }
+        else if (choice == 1)
+        {
+            for(long m = 0; m < optimum_value; m++)
+            {
+                if(table[(hash_word(tmpEnglish) + m * m) % optimum_value].full == false)
+                {
+                    strcpy(table[(hash_word(tmpEnglish) + m * m) % optimum_value].English, tmpEnglish);
+                    strcpy(table[(hash_word(tmpEnglish) + m * m) % optimum_value].Turkish, tmpTurkish);
+                    table[(hash_word(tmpEnglish) + m * m) % optimum_value].full = true;
+                    break;
+                }
+            }
+        }
+        else if (choice == 2)
+        {
+            if(table[(hash_word(tmpEnglish))].full == false)
+            {
+                strcpy(table[(hash_word(tmpEnglish))].English,tmpEnglish);
+                strcpy(table[(hash_word(tmpEnglish))].Turkish,tmpTurkish);
+                table[(hash_word(tmpEnglish))].full = true;
+            }
+            else
+            {
+                int num = hash_word(tmpEnglish);
+                while(table[num].full == true)
+                {
+                    num = hash_num(num);
+                }
+                strcpy(table[num].English, tmpEnglish);
+                strcpy(table[num].Turkish, tmpTurkish);
+                table[num].full = true;
+            }
+        }
+        else if (choice == 3)
+        {
+            for(int m = 0; m < optimum_value; m++)
+            {
+                if(table[(hash_word(tmpEnglish) + m) % optimum_value].full == false)
+                {
+                    strcpy(table[(hash_word(tmpEnglish) + m) % optimum_value].English, tmpEnglish);
+                    strcpy(table[(hash_word(tmpEnglish) + m) % optimum_value].Turkish, tmpTurkish);
+                    table[(hash_word(tmpEnglish) + m) % optimum_value].full = true;
+                    break;
+                }
+        }
         }
     }
-    //TODO write_common_func(resolver)
-    //ofstream Chaining_Dosya_Yaz("Chaining.bin",ios::binary);
-    //Chaining_Dosya_Yaz.write((char *) &table,sizeof(table));
-    //Chaining_Dosya_Yaz.close();
+    string binary_file_name = resolvers[choice] + ".bin";
+    
+    ofstream write_to_bin_file(binary_file_name.c_str(), ios::binary);
+    write_to_bin_file.write((char *) &table,sizeof(table));
+    write_to_bin_file.close();
 }
 
 void resolver_choice(int choice)
 {
-    
-    string resolvers[4] = {"Chaining", 
-                           "Quadratic Probing", 
-                           "Double Hashing", 
-                           "Linear Probing",
-                          };
-    
-    
     
     system("cls");
     cout<<"Process has been started.."<<endl;
@@ -230,17 +272,183 @@ void resolver_choice(int choice)
     
     cout<<resolvers[choice]<<" is chosen..."<<endl;
     
-    
-    //TODO run resolver_func(choice) and run init and result portion.
     //TODO Main part handle with logic.
     
-    resolver_func(choice, resolvers[choice]);
+    resolver_func(choice);
     time_end = clock();
     cout<<"Process has been completed."<<endl<<endl;
     the_time = (double)(time_end - time_start) / CLOCKS_PER_SEC;
     cout<<"Taken Time : "<<the_time<<" seconds"<<endl;
     cout<<"Collusion Count : "<<collusion_count<<endl;
     cout<<"Created File Size : "<<sizeof(Unit)*optimum_value*2<<" byte"<<endl<<endl;
+}
+void normalize_Turkish_characters(char word[])
+{
+     int count = 0;
+     int tmp;
+     for(int i = 0; i < strlen(word); i++)
+     {
+       tmp = (int)word[i];
+       if(tmp == -4)
+         cout<<"u";
+       else if(tmp == -3)
+         cout<<"i";
+       else if(tmp == -2)
+         cout<<"s";
+       else if(tmp == -16)
+         cout<<"g";
+       else if(tmp == -25)
+         cout<<"c";
+       else if(tmp == -10)
+         cout<<"o";
+       else if(tmp == -57)
+         cout<<"C";
+       else if(tmp == -48)
+         cout<<"G";
+       else if(tmp == -35)
+         cout<<"I";
+       else if(tmp == -42)
+         cout<<"O";
+       else if(tmp == -34)
+         cout<<"S";
+       else if(tmp == -36)
+         cout<<"U";
+       else
+         cout<<word[i];
+    
+       count++;
+     }
+     cout<<endl;
+}
+
+void chaining_reader(char word[36], int choice)
+{
+    Unit read_unit;
+    string binary_file_name = resolvers[choice] + ".bin";
+    ifstream read_binary_file(binary_file_name.c_str() , ios::binary);
+    read_binary_file.seekg(sizeof(Unit)*hash_word(word));
+    read_binary_file.read((char *)&read_unit, sizeof(Unit));
+    if (read_unit.full==false)
+    {
+        cout<<"Word not found"<<endl;
+        read_binary_file.close();
+        return;
+    }
+    if(strcmp(word,read_unit.English)==0)
+    {
+        normalize_Turkish_characters(read_unit.Turkish);
+        read_binary_file.close();
+        return;
+    }
+    int num=0;
+    while(read_unit.next!=-1)
+    {
+        num=read_unit.next;
+        read_binary_file.seekg(sizeof(Unit)*num);
+        read_binary_file.read((char *)&read_unit, sizeof(Unit));
+        if(strcmp(word,read_unit.English)==0)
+        {
+            normalize_Turkish_characters(read_unit.Turkish);
+            read_binary_file.close();
+            return;
+        }
+    }
+    read_binary_file.close();
+    cout<<"Word not found"<<endl;
+}
+
+void quadratic_reader(char word[36], int choice)
+{
+    Unit read_unit;
+    string binary_file_name = resolvers[choice] + ".bin";
+    ifstream read_binary_file(binary_file_name.c_str() , ios::binary);
+    for(int m=0; m<optimum_value; m++)
+    {
+        read_binary_file.seekg(sizeof(Unit)*((hash_word(word)+m*m)%optimum_value));
+        read_binary_file.read((char *)&read_unit, sizeof(Unit));
+        if (read_unit.full==false)
+        {
+            cout<<"Word not found"<<endl;
+            read_binary_file.close();
+            return;
+        }
+        if(strcmp(word,read_unit.English)==0)
+        {
+            normalize_Turkish_characters(read_unit.Turkish);
+            read_binary_file.close();
+            return;
+        }
+    }
+    read_binary_file.close();
+    cout<<"Word not found"<<endl;
+}
+
+void double_reader(char word[36], int choice)
+{
+    Unit read_unit;
+    string binary_file_name = resolvers[choice] + ".bin";
+    ifstream read_binary_file(binary_file_name.c_str() , ios::binary);
+    read_binary_file.seekg(sizeof(Unit)*hash_word(word));
+    read_binary_file.read((char *)&read_unit, sizeof(Unit));
+    if (read_unit.full==false)
+    {
+        cout<<"Word not found"<<endl;
+        read_binary_file.close();
+        return;
+    }
+    if(strcmp(word,read_unit.English)==0)
+    {
+        normalize_Turkish_characters(read_unit.Turkish);
+        read_binary_file.close();
+        return;
+    }
+    int num=hash_word(word);
+    while(1)
+    {
+        num=hash_num(num);
+        read_binary_file.seekg(sizeof(Unit)*num);
+        read_binary_file.read((char *)&read_unit, sizeof(Unit));
+        if(read_unit.full==false)
+        {
+            cout<<"Word not found"<<endl;
+            read_binary_file.close();
+            return;
+        }
+        if(strcmp(word,read_unit.English)==0)
+        {
+            normalize_Turkish_characters(read_unit.Turkish);
+            read_binary_file.close();
+            return;
+        }
+    }
+    read_binary_file.close();
+    cout<<"Word not found"<<endl;
+}
+
+void linear_reader(char word[36], int choice)
+{
+    Unit read_unit;
+    string binary_file_name = resolvers[choice] + ".bin";
+    ifstream read_binary_file(binary_file_name.c_str() , ios::binary);
+    for(int m = 0; m < optimum_value; m++)
+    {
+        read_binary_file.seekg(sizeof(Unit) * ((hash_word(word) + m) % optimum_value));
+        read_binary_file.read((char *)&read_unit, sizeof(Unit));
+        if (read_unit.full == false)
+        {
+            cout<<"Word not found"<<endl;
+            read_binary_file.close();
+            return;
+        }
+        if(strcmp(word, read_unit.English)==0)
+        {
+            normalize_Turkish_characters(read_unit.Turkish);
+            read_binary_file.close();
+            return;
+        }
+    }
+    read_binary_file.close();
+    cout<<"Kelime Bulunamadi"<<endl;
 }
 main()
 {
@@ -280,35 +488,33 @@ main()
                  
             system("cls");
             resolver_choice(choice);
+            
+            cout<<"Enter English word from dictionary: ";
+            cin>>search_word;
+
+        
+            switch(choice)
+            {
+                case 0:
+                {
+                    chaining_reader(search_word, choice);
+                }break;
+                case 1:
+                {
+                    quadratic_reader(search_word, choice);
+                }break;
+                case 2:
+                {
+                    double_reader(search_word, choice);
+                }break;
+                case 3:
+                {
+                    linear_reader(search_word, choice);
+                }break;
+            }
+            cout<<endl<<endl<<"Please press any key to exit";
+            _getch();
             break;
         }
-    }
-    while(1)
-    {
-        cout<<"Enter English word from dictionary: ";
-        cin>>search_word;
-        if (strcmp(search_word, "exit") == 0)
-            return 0;
-
-
-      // switch(choice)
-      // {
-          // case 1:
-          // {
-              // Chaining_Oku(search_word);
-          // }break;
-          // case 2:
-          // {
-              // Quadratic_Oku(search_word);
-          // }break;
-          // case 3:
-          // {
-              // Double_Oku(search_word);
-          // }break;
-          // case 4:
-          // {
-              // Linear_Oku(search_word);
-          // }break;
-      // }
     }
 }
