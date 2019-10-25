@@ -23,4 +23,5 @@ So to accelerate this search process, I will try some methods and compare their 
 <br>
 # Result
 <br>
+
 ![alt text](https://raw.githubusercontent.com/gungorahmet/hashing-collusion-methods-comparison/master/documents/hashing_all_resolvers.png)
