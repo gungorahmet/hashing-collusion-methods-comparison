@@ -1,9 +1,7 @@
 # Comparison of hashing collusion resolve methods
 <br><br>
-#Update;
-<br>
-Project has been completed. Result is below.
-<br>
+# Update -> The project has been completed. The result is below.
+<br><br>
 For further information, a great explanation page;<br>
 https://www.geeksforgeeks.org/hashing-set-1-introduction/
 <br><br>
