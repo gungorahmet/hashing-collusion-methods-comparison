@@ -34,7 +34,8 @@ int hash_word(char[36]);
 int hash_num(int);
 void resolver_func(int);
 
-int word_count = 1, optimum_value = 0, collusion_count = 0;
+int word_count = 1, collusion_count = 0;
+long int optimum_value = 0;
 string dictionary_file_full;
 
 string resolvers[4] = {"Chaining", 
@@ -280,7 +281,12 @@ void resolver_choice(int choice)
     the_time = (double)(time_end - time_start) / CLOCKS_PER_SEC;
     cout<<"Taken Time : "<<the_time<<" seconds"<<endl;
     cout<<"Collusion Count : "<<collusion_count<<endl;
-    cout<<"Created File Size : "<<sizeof(Unit)*optimum_value*2<<" byte"<<endl<<endl;
+    
+    int file_size = optimum_value;
+    if (choice == 0)
+        file_size *= 2;
+    
+    cout<<"Created File Size : "<<sizeof(Unit) * file_size * 2<<" byte"<<endl<<endl;
 }
 void normalize_Turkish_characters(char word[])
 {
